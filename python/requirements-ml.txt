@@ -1,0 +1,3 @@
+# Optional MLlib/Spark dependency.
+# If installation fails, the project still runs via fallback logic in model.py.
+pyspark>=3.4.0
