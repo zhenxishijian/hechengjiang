@@ -21,6 +21,7 @@
 
 ## 快速开始
 
+### 1) Python 侧（基础依赖）
 ### 1) Python 侧（MLlib）
 
 ```bash

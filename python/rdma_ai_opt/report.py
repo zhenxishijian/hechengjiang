@@ -106,6 +106,31 @@ def write_report(output_dir: Path, result: Dict) -> None:
 
     json_path.write_text(json.dumps(result_with_artifacts, ensure_ascii=False, indent=2), encoding="utf-8")
 
+    artifacts_lines = [f"- {name}" for name in artifacts]
+    md_lines = [
+        "# RDMA AI 优化报告",
+        "",
+        "## 预测结果",
+        f"- 预测延迟: {result['prediction']['predicted_latency_us']:.3f} us",
+        f"- 过载风险: {result['prediction']['overload_risk']:.3f}",
+        "",
+        "## 参数建议",
+        f"- MTU: {result['tuning']['recommended']['mtu']}",
+        f"- QP 数量: {result['tuning']['recommended']['qp_count']}",
+        f"- CQ moderation: {result['tuning']['recommended']['cq_moderation']}",
+        f"- Inline size: {result['tuning']['recommended']['inline_size']}",
+        f"- 原因: {result['tuning']['rationale']}",
+        "",
+        "## 负载均衡",
+        f"- 动作: {result['load_balance']['action']}",
+        f"- 说明: {result['load_balance']['detail']}",
+        "",
+        "## 可视化输出",
+        *artifacts_lines,
+        "",
+    ]
+    md_path.write_text("\n".join(md_lines), encoding="utf-8")
+    return result_with_artifacts
     artifacts_lines = "\n".join(f"- {name}" for name in artifacts)
     json_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
 
