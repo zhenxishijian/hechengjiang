@@ -92,6 +92,10 @@ def generate_visualizations(output_dir: Path, metrics: List[Metric], result: Dic
 
 
 def write_report(output_dir: Path, result: Dict, metrics: List[Metric]) -> Dict:
+from typing import Dict
+
+
+def write_report(output_dir: Path, result: Dict) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     json_path = output_dir / "report.json"
     md_path = output_dir / "report.md"
@@ -103,6 +107,8 @@ def write_report(output_dir: Path, result: Dict, metrics: List[Metric]) -> Dict:
     json_path.write_text(json.dumps(result_with_artifacts, ensure_ascii=False, indent=2), encoding="utf-8")
 
     artifacts_lines = "\n".join(f"- {name}" for name in artifacts)
+    json_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+
     md = f"""# RDMA AI 优化报告
 
 ## 预测结果
@@ -125,3 +131,5 @@ def write_report(output_dir: Path, result: Dict, metrics: List[Metric]) -> Dict:
 """
     md_path.write_text(md, encoding="utf-8")
     return result_with_artifacts
+"""
+    md_path.write_text(md, encoding="utf-8")

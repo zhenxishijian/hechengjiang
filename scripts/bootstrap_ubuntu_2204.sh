@@ -5,6 +5,10 @@ echo "[1/8] Update apt index"
 sudo apt update
 
 echo "[2/8] Install base build/runtime deps"
+echo "[1/6] Update apt index"
+sudo apt update
+
+echo "[2/6] Install base build/runtime deps"
 sudo apt install -y \
   ca-certificates curl git \
   python3 python3-venv python3-pip \
@@ -14,6 +18,10 @@ echo "[3/8] Optional Java runtime for Spark"
 sudo apt install -y openjdk-17-jre || true
 
 echo "[4/8] Show tool versions"
+echo "[3/6] Optional Java runtime for Spark"
+sudo apt install -y openjdk-17-jre || true
+
+echo "[4/6] Show tool versions"
 python3 --version
 pip3 --version
 cmake --version
@@ -21,6 +29,7 @@ g++ --version || true
 java -version || true
 
 echo "[5/8] Prepare python virtual environment"
+echo "[5/6] Prepare python virtual environment"
 cd "$(dirname "$0")/.."
 python3 -m venv python/.venv
 source python/.venv/bin/activate
@@ -45,6 +54,9 @@ if [ "$SKIP_SPARK" -eq 0 ] && ! pip install --no-cache-dir -r python/requirement
 fi
 
 echo "[8/8] Quick verification run"
+pip install -r python/requirements.txt
+
+echo "[6/6] Quick verification run"
 PYTHONPATH=python python -m rdma_ai_opt.cli --input python/sample_metrics.jsonl --report reports/latest
 cmake -S cpp -B build
 cmake --build build

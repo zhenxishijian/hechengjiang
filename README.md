@@ -21,7 +21,7 @@
 
 ## 快速开始
 
-### 1) Python 侧（基础依赖）
+### 1) Python 侧（MLlib）
 
 ```bash
 cd python
@@ -38,6 +38,9 @@ python -m rdma_ai_opt.cli --input sample_metrics.jsonl --report ../reports/lates
 - `reports/latest/report.md`
 - `reports/latest/latency_throughput_trend.png`（若无 matplotlib 则回退为 `latency_trend.svg`）
 - `reports/latest/recommended_params.png`（若无 matplotlib 则仅输出 SVG 回退图）
+
+python -m rdma_ai_opt.cli --input sample_metrics.jsonl --report ../reports/latest
+```
 
 ### 2) C++ 侧
 
