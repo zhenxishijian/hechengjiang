@@ -92,6 +92,10 @@ def generate_visualizations(output_dir: Path, metrics: List[Metric], result: Dic
 
 
 def write_report(output_dir: Path, result: Dict, metrics: List[Metric]) -> Dict:
+from typing import Dict
+
+
+def write_report(output_dir: Path, result: Dict) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     json_path = output_dir / "report.json"
     md_path = output_dir / "report.md"
@@ -127,3 +131,30 @@ def write_report(output_dir: Path, result: Dict, metrics: List[Metric]) -> Dict:
     ]
     md_path.write_text("\n".join(md_lines), encoding="utf-8")
     return result_with_artifacts
+    artifacts_lines = "\n".join(f"- {name}" for name in artifacts)
+    json_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    md = f"""# RDMA AI 优化报告
+
+## 预测结果
+- 预测延迟: {result['prediction']['predicted_latency_us']:.3f} us
+- 过载风险: {result['prediction']['overload_risk']:.3f}
+
+## 参数建议
+- MTU: {result['tuning']['recommended']['mtu']}
+- QP 数量: {result['tuning']['recommended']['qp_count']}
+- CQ moderation: {result['tuning']['recommended']['cq_moderation']}
+- Inline size: {result['tuning']['recommended']['inline_size']}
+- 原因: {result['tuning']['rationale']}
+
+## 负载均衡
+- 动作: {result['load_balance']['action']}
+- 说明: {result['load_balance']['detail']}
+
+## 可视化输出
+{artifacts_lines}
+"""
+    md_path.write_text(md, encoding="utf-8")
+    return result_with_artifacts
+"""
+    md_path.write_text(md, encoding="utf-8")

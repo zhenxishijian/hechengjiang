@@ -27,4 +27,5 @@ def run_pipeline(input_path: Path, report_dir: Path) -> Dict:
     }
 
     result = write_report(report_dir, result, metrics)
+    write_report(report_dir, result)
     return result
