@@ -59,8 +59,6 @@ cd python
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-# 可选（启用 Spark/MLlib）：
-# pip install -r requirements-ml.txt
 python -m rdma_ai_opt.cli --input sample_metrics.jsonl --report ../reports/latest
 ```
 
@@ -99,64 +97,3 @@ cmake --build build
 
 ### 3) VMware 共享目录权限问题
 - 建议先把代码复制到 Ubuntu 本地目录（如 `~/workspace`）再构建，避免共享目录的权限/IO 问题。
-
-
-## 八、`pyspark` 构建失败的处理（你这次遇到的错误）
-
-当出现以下错误时：
-
-```text
-ERROR: Failed building wheel for pyspark
-Failed to build pyspark
-```
-
-请先不要卡住，按下面执行：
-
-```bash
-cd python
-source .venv/bin/activate
-# 基础运行依赖
-pip install -r requirements.txt
-
-# 可选 Spark/MLlib，失败也允许继续
-pip install -r requirements-ml.txt || true
-
-# 验证程序能跑
-python -m rdma_ai_opt.cli --input sample_metrics.jsonl --report ../reports/latest
-```
-
-项目会在无 Spark 时自动退化为规则推断模式，因此不会阻塞你在 Ubuntu 22.04 上先跑通全流程。
-
-
-## 九、`No space left on device`（磁盘不足）处理
-
-你贴的日志里出现：
-
-```text
-error: [Errno 28] No space left on device
-ERROR: Failed building wheel for pyspark
-```
-
-这通常不是代码问题，而是安装 `pyspark` 时临时文件和缓存占满磁盘。
-
-可直接执行：
-
-```bash
-# 1) 看空间
-df -h
-
-# 2) 清理缓存
-sudo apt clean
-rm -rf ~/.cache/pip
-
-# 3) 基础依赖先跑通
-cd python
-source .venv/bin/activate
-pip install -r requirements.txt
-python -m rdma_ai_opt.cli --input sample_metrics.jsonl --report ../reports/latest
-
-# 4) Spark 改为可选安装，尽量少占空间
-pip install --no-cache-dir -r requirements-ml.txt || true
-```
-
-另外，`scripts/bootstrap_ubuntu_2204.sh` 已加磁盘空间检查：低于约 8GB 时会自动跳过可选 `pyspark` 安装，避免再次因空间不足失败。

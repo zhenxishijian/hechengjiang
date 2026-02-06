@@ -21,15 +21,13 @@
 
 ## 快速开始
 
-### 1) Python 侧（基础依赖）
+### 1) Python 侧（MLlib）
 
 ```bash
 cd python
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-# 可选：如果你想启用 Spark/MLlib 再安装这一行
-# pip install -r requirements-ml.txt
 python -m rdma_ai_opt.cli --input sample_metrics.jsonl --report ../reports/latest
 ```
 
@@ -62,8 +60,6 @@ cd /path/to/repo/python
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-# 可选：如果你想启用 Spark/MLlib 再安装这一行
-# pip install -r requirements-ml.txt
 python -m rdma_ai_opt.cli --input sample_metrics.jsonl --report ../reports/latest
 cd ..
 cmake -S cpp -B build
@@ -77,47 +73,4 @@ cmake --build build
 ```bash
 chmod +x scripts/bootstrap_ubuntu_2204.sh
 ./scripts/bootstrap_ubuntu_2204.sh
-```
-
-
-### `pyspark` 安装失败（Failed building wheel for pyspark）怎么办
-
-如果你遇到该错误，不会影响本项目基础运行。原因通常是本机构建链或环境限制。
-
-可按下面顺序处理：
-
-```bash
-# 1) 先保证基础功能可运行
-cd python
-source .venv/bin/activate
-pip install -r requirements.txt
-python -m rdma_ai_opt.cli --input sample_metrics.jsonl --report ../reports/latest
-
-# 2) 再尝试安装可选 MLlib（失败也不阻塞）
-pip install -r requirements-ml.txt || true
-```
-
-说明：`python/rdma_ai_opt/model.py` 已内置回退逻辑，缺少 Spark 时会自动使用规则推断。
-
-
-### `pyspark` 安装出现 `No space left on device`
-
-这是磁盘空间不足导致的（`pyspark` 体积较大）。建议：
-
-```bash
-# 查看剩余空间
-df -h
-
-# 清理 apt 与 pip 缓存
-sudo apt clean
-rm -rf ~/.cache/pip
-
-# 仅安装基础依赖（先跑通）
-cd python
-source .venv/bin/activate
-pip install -r requirements.txt
-python -m rdma_ai_opt.cli --input sample_metrics.jsonl --report ../reports/latest
-
-# 可选 Spark，使用 no-cache 降低磁盘占用（失败也不阻塞）
-pip install --no-cache-dir -r requirements-ml.txt || true
 ```
